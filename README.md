@@ -1,6 +1,6 @@
 # Klikk Travel — Sales Dashboard
 
-An interactive sales dashboard for Klikk Travel's visa-processing business, built from the **KLIKK 2021 › VISA TRANSACTIONS** Google Sheet.
+An interactive sales dashboard for Klikk Travel's travel business, built from the **KLIKK 2021 › DAILY TRANSACTIONS** Google Sheet.
 
 ## View it
 
@@ -9,33 +9,38 @@ Open [`sales_dashboard.html`](sales_dashboard.html) directly in a browser — it
 ## What's inside
 
 - **Top KPIs** — total sales, revenue, orders, average order value, gross profit, profit margin
-- **Sales performance** — monthly trend, revenue vs. profit, target vs. actual
-- **Product analysis** — best/lowest performing destinations, sales mix by account type, package status mix
-- **Customer insights** — new vs. returning clients, acquisition trend, top customers by revenue
-- **Regional performance** — an origin–destination route map (Manila → each visa destination) plus a revenue comparison table
-- **Sales channel analysis** — revenue and performance by account type (VSP / B2B)
-- **Filters** — trend granularity (daily/weekly/monthly/quarterly/yearly), custom date range, region, product, sales rep, account type, with click-to-filter drill-down on charts
+- **Sales performance** — trend (daily/weekly/monthly/quarterly/yearly), revenue vs. profit, target vs. actual
+- **Product analysis** — top 10 best-selling products, a "needs attention" list of low-revenue products with 10+ orders, sales by product category, package status mix
+- **Customer insights** — new vs. returning clients, acquisition trend, top 10 customers by revenue (aggregated across all their orders)
+- **Regional performance** — an origin–destination route map (Manila → top destinations by revenue) plus a ranked revenue/profit table
+- **Sales channel analysis** — revenue and performance by channel (Walk-in, Ads, No Ads, B2B, Referral)
+- **Filters** — trend granularity, custom date range, region, product category, sales rep, sales channel, with click-to-filter drill-down on charts and rows
 - **Export** — CSV, Excel, and PDF (print)
 
 ## Data mapping
 
-The source sheet tracks visa-processing transactions, not a generic e-commerce catalog, so a few fields are repurposed:
-
 | Dashboard concept | Sheet field |
 |---|---|
 | Region | Destination |
-| Product category | Package (currently one type: Visa Processing) |
+| Product | Package (raw text, e.g. "ALL IN W/ CITY TOUR") |
+| Product category | Package, grouped by keyword (All-Inclusive, Ticket, Land Arrangement, Tour, Visa Processing, Baggage, Insurance, Travel Tax, Rebooking, B2B, Transfer, Passport, Hotel, Other) |
 | Sales rep | Agent |
-| Customer segment / Sales channel | Account (VSP = direct/retail, B2B = partner/wholesale) |
+| Sales channel | The sheet's ADS/lead-source field, normalized to Walk-in / Ads / No Ads / B2B / Referral / Unspecified |
+
+The sheet doesn't track literal online/retail/wholesale/marketplace channels or a dedicated customer-segment field, so those aren't represented as separate dimensions.
+
+## Scope
+
+**VSP-channel transactions are excluded from this dashboard by standing request.** Of 5,284 valid transactions in the DAILY TRANSACTIONS tab, 99 tagged with the VSP channel were removed, leaving **5,185 transactions** that power every number on this page.
 
 ## Data coverage
 
-Of 836 rows in the source sheet, 34 have a usable date + client name, and 3 have complete transaction financials. **VSP-channel transactions are excluded from this dashboard by request** — only B2B-channel activity is shown, leaving 1 closed transaction and 31 client/inquiry log entries in scope. KPIs, revenue/profit charts, and the target bullet are computed from that 1 transaction; the acquisition trend and new-vs-returning split draw on the 31-row log. Every number on the dashboard is computed live from the embedded data — nothing is padded or estimated.
+5,185 real transactions from Jan 1, 2021 to Jul 15, 2026, each with complete financials (revenue, cost, commission, profit). Every KPI, chart, and table is computed live from that embedded dataset — nothing is padded, sampled, or estimated. Destination names are case-normalized (e.g. "Boracay" and "BORACAY" in the source sheet are merged) but otherwise left as entered; free-text variants of the same place (e.g. "CAGAYAN" vs "CAGAYAN DE ORO" vs "CDO") are not merged.
 
 ## Refreshing the data
 
-This is a static snapshot (embedded as JSON inside the HTML `<script>` block), not a live connection to Google Sheets. To refresh: pull the latest rows from the sheet and update the `TRANSACTIONS` and `LEADS` arrays near the top of the script in `sales_dashboard.html`.
+This is a static snapshot (embedded as a compact JSON array inside the HTML `<script>` block), not a live connection to Google Sheets. To refresh, ask Claude to pull the latest rows from the sheet and regenerate the embedded data — it's not practical to hand-edit given the row count.
 
 ## Privacy note
 
-Raw exports of the source sheet (`klikk_raw.csv`, `klikk_decoded.csv`), which contain full client names and financial detail, are intentionally excluded from this repo via `.gitignore`. The dashboard itself only embeds the small subset of records needed to power the visuals.
+The dashboard embeds real client names alongside transaction data (needed for the customer-insight sections). No raw sheet exports are kept in this repository — only the cleaned, embedded dataset inside `sales_dashboard.html`.

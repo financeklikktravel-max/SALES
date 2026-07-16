@@ -470,7 +470,7 @@
       </div>
       <div class="panel">
         <div class="panel-head">
-          <div><div class="panel-title">Sales mix by account type</div><div class="panel-sub">VSP (direct/retail) vs. B2B (partner/wholesale)</div></div>
+          <div><div class="panel-title">Sales mix by account type</div><div class="panel-sub">B2B (partner/wholesale) — VSP-channel sales excluded from this view</div></div>
         </div>
         <div class="chart-wrap" id="accountDonut"></div>
         <div class="legend" id="accountDonutLegend"></div>
@@ -490,7 +490,7 @@
     <div class="section-head">
       <div>
         <h2>Customer Insights</h2>
-        <p>Based on the client &amp; inquiry log (34 dated entries), not only closed sales</p>
+        <p>Based on the client &amp; inquiry log (31 dated entries, VSP-channel entries excluded), not only closed sales</p>
       </div>
     </div>
     <div class="grid grid-customers">
@@ -556,13 +556,13 @@
     <div class="section-head">
       <div>
         <h2>Sales Channel Analysis</h2>
-        <p>The sheet tracks one channel-like field (Account: VSP vs. B2B) — online/retail/wholesale/marketplace splits aren't captured yet</p>
+        <p>The sheet tracks one channel-like field (Account: VSP vs. B2B); VSP-channel sales are excluded from this dashboard, and online/retail/wholesale/marketplace splits aren't captured at all</p>
       </div>
     </div>
     <div class="grid grid-channels">
       <div class="panel">
         <div class="panel-head">
-          <div><div class="panel-title">Revenue by account channel</div><div class="panel-sub">VSP vs. B2B</div></div>
+          <div><div class="panel-title">Revenue by account channel</div><div class="panel-sub">B2B only — VSP-channel sales excluded</div></div>
         </div>
         <div class="chart-wrap" id="channelBar"></div>
       </div>
@@ -583,7 +583,8 @@
   <!-- ================= FOOTER ================= -->
   <div class="footnote">
     <div><strong>Data mapping.</strong> Region = Destination · Product category = Package (currently one type: Visa Processing) · Sales rep = Agent · Segment / Channel = Account (VSP / B2B). The source sheet has no dedicated fields for online/retail/wholesale/marketplace channel or customer-segment tiering.</div>
-    <div><strong>Coverage.</strong> Of 836 rows in the sheet, 34 have a usable date + client name, and 3 have complete transaction financials. Sections built on financials (KPIs, revenue/profit charts, target) reflect those 3; sections built on the fuller log (acquisition trend, new vs. returning) use all 34.</div>
+    <div><strong>Scope.</strong> VSP-channel transactions and their tied client entries are excluded from this dashboard by request — only B2B-channel activity is shown.</div>
+    <div><strong>Coverage.</strong> Of 836 rows in the sheet, 34 have a usable date + client name (31 shown here after excluding VSP), and 3 have complete transaction financials (1 shown here after excluding VSP). Sections built on financials (KPIs, revenue/profit charts, target) reflect that 1 transaction; sections built on the fuller log (acquisition trend, new vs. returning) use the 31 remaining entries.</div>
     <div>Source: Google Sheets — <em>KLIKK 2021 › VISA TRANSACTIONS</em>. Snapshot taken <span id="footSnapshot"></span>.</div>
   </div>
 </div>
@@ -599,18 +600,15 @@
    ============================================================ */
 var SNAPSHOT_ISO = "2026-07-16";
 
-// Closed / financially-complete transactions (3 of 836 rows).
+// Closed / financially-complete transactions (3 of 836 rows in the sheet;
+// VSP-channel transactions are excluded from this dashboard by request).
 var TRANSACTIONS = [
-  { id:"t1", date:"2023-05-24", client:"Vivienne Grace", agent:"Dave", account:"B2B", destination:"Japan", flag:"🇯🇵", package:"Visa Processing", pax:2, srp:2300, totalCost:1106, commission:119.40, profit:1074.60, status:"Completed" },
-  { id:"t2", date:"2023-05-26", client:"Kyana Marie Berberabe Mercado", agent:"Dave", account:"VSP", destination:"Korea", flag:"🇰🇷", package:"Visa Processing", pax:3, srp:7500, totalCost:100, commission:740, profit:6660, status:"For Voucher" },
-  { id:"t3", date:"2023-05-28", client:"Rey Yap", agent:"Dave", account:"VSP", destination:"Korea", flag:"🇰🇷", package:"Visa Processing", pax:1, srp:1700, totalCost:100, commission:160, profit:1440, status:"Completed" }
+  { id:"t1", date:"2023-05-24", client:"Vivienne Grace", agent:"Dave", account:"B2B", destination:"Japan", flag:"🇯🇵", package:"Visa Processing", pax:2, srp:2300, totalCost:1106, commission:119.40, profit:1074.60, status:"Completed" }
 ];
 
-// Fuller client / inquiry log (34 of 836 rows with at least a date + name).
+// Fuller client / inquiry log (34 of 836 rows with at least a date + name;
+// the 3 entries tied to excluded VSP transactions are left out here too).
 var LEADS = [
-  { date:"2023-05-26", client:"Kyana Marie Berberabe Mercado" },
-  { date:"2023-05-26", client:"Bon Solano Calvara" },
-  { date:"2023-05-28", client:"Rey Yap" },
   { date:"2023-05-24", client:"Vivienne Grace" },
   { date:"2023-06-01", client:"Lara Lorenzo (Rhaw Sienna)" },
   { date:"2023-06-03", client:"Donna Figuracion (Karissa Ann)" },
@@ -719,7 +717,7 @@ var state = {
   category: "all",
   rep: "all",
   account: "all",
-  target: 15000
+  target: 3000
 };
 
 /* ============================================================

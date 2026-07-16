@@ -30,7 +30,7 @@ The source sheet tracks visa-processing transactions, not a generic e-commerce c
 
 ## Data coverage
 
-Of 836 rows in the source sheet, 34 have a usable date + client name, and 3 have complete transaction financials. KPIs, revenue/profit charts, and the target bullet are computed from those 3 closed transactions; the acquisition trend and new-vs-returning split draw on the fuller 34-row log. Every number on the dashboard is computed live from the embedded data — nothing is padded or estimated.
+Of 836 rows in the source sheet, 34 have a usable date + client name, and 3 have complete transaction financials. **VSP-channel transactions are excluded from this dashboard by request** — only B2B-channel activity is shown, leaving 1 closed transaction and 31 client/inquiry log entries in scope. KPIs, revenue/profit charts, and the target bullet are computed from that 1 transaction; the acquisition trend and new-vs-returning split draw on the 31-row log. Every number on the dashboard is computed live from the embedded data — nothing is padded or estimated.
 
 ## Refreshing the data
 

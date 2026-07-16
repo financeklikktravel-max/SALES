@@ -1,0 +1,6 @@
+# Raw data exports from the source Google Sheet (contains real client PII)
+klikk_raw.csv
+klikk_decoded.csv
+
+# Claude Code local settings
+.claude/

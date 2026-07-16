@@ -8,7 +8,7 @@ Open [`sales_dashboard.html`](sales_dashboard.html) directly in a browser — it
 
 ## What's inside
 
-- **Top KPIs** — total sales, revenue, orders, average order value, gross profit, profit margin
+- **Monthly summary** — total SRP, total cash flow, and total transactions by month (most recent first)
 - **Sales performance** — trend (daily/weekly/monthly/quarterly/yearly), revenue vs. profit, target vs. actual
 - **Product analysis** — top 10 best-selling products, a "needs attention" list of low-revenue products with 10+ orders, sales by product category, package status mix
 - **Customer insights** — new vs. returning clients, acquisition trend, top 10 customers by revenue (aggregated across all their orders)

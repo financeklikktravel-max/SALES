@@ -180,7 +180,7 @@
   .section-head p{ margin:2px 0 0; font-size:12px; color:var(--text-muted); }
 
   .grid{ display:grid; gap:14px; }
-  .grid-kpi{ grid-template-columns:repeat(6, 1fr); }
+  .grid-kpi{ grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }
   .grid-perf{ grid-template-columns:1.4fr 1fr 1fr; }
   .grid-products{ grid-template-columns:1.2fr 0.9fr 0.9fr; }
   .grid-customers{ grid-template-columns:0.85fr 0.85fr 1.3fr; }
@@ -354,6 +354,7 @@
     <a class="nav-pill" href="#customers">Customer Insights</a>
     <a class="nav-pill" href="#regions">Regional Performance</a>
     <a class="nav-pill" href="#channels">Sales Channel</a>
+    <a class="nav-pill" href="#agents">Agent Performance</a>
   </nav>
 
   <!-- ================= FILTER BAR ================= -->
@@ -401,22 +402,24 @@
     <div class="chip-row" id="chipRow"></div>
   </div>
 
-  <!-- ================= OVERVIEW / MONTHLY SUMMARY ================= -->
+  <!-- ================= OVERVIEW / KPIs ================= -->
   <section class="section" id="overview">
     <div class="section-head">
       <div>
-        <h2>Monthly Summary</h2>
-        <p>Total SRP, cash flow, and transactions by month — computed live from transactions currently in view</p>
+        <h2>Top KPIs</h2>
+        <p id="overviewSub">Computed live from transactions currently in view</p>
       </div>
     </div>
-    <div class="panel">
+    <div class="grid grid-kpi" id="kpiGrid"></div>
+
+    <div class="panel" style="margin-top:14px;">
       <div class="panel-head">
-        <div><div class="panel-title">Monthly totals</div><div class="panel-sub">Most recent month first</div></div>
+        <div><div class="panel-title">Breakdown by period</div><div class="panel-sub" id="periodBreakdownSub">Total SRP, cash flow, and transactions</div></div>
         <span class="panel-tag" id="monthlyCountTag"></span>
       </div>
       <div class="table-scroll">
         <table class="data-table" id="monthlyTable">
-          <thead><tr><th>Month</th><th class="num">Total SRP</th><th class="num">Total Cash Flow</th><th class="num">Total Transactions</th></tr></thead>
+          <thead><tr><th>Period</th><th class="num">Total SRP</th><th class="num">Total Cash Flow</th><th class="num">Total Transactions</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -596,6 +599,36 @@
     </div>
   </section>
 
+  <!-- ================= AGENT PERFORMANCE ================= -->
+  <section class="section" id="agents">
+    <div class="section-head">
+      <div>
+        <h2>Agent Performance</h2>
+        <p>Revenue and profit by sales rep — click a bar to filter the dashboard</p>
+      </div>
+    </div>
+    <div class="grid grid-channels">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Revenue by agent</div><div class="panel-sub">Top agents by revenue</div></div>
+          <span class="panel-tag" id="agentCountTag"></span>
+        </div>
+        <div class="chart-wrap scrollable" id="agentBar"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Agent comparison</div><div class="panel-sub">All agents, ranked by revenue</div></div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="agentTable">
+            <thead><tr><th>Agent</th><th class="num">Orders</th><th class="num">Revenue</th><th class="num">AOV</th><th class="num">Margin</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= FOOTER ================= -->
   <div class="footnote">
     <div><strong>Data mapping.</strong> Region = Destination · Product = Package (raw text) · Product category = Package, grouped by keyword (e.g. "ALL IN…" → All-Inclusive, "…TICKET…" → Ticket) · Sales rep = Agent · Sales channel = the sheet's ADS/lead-source field, normalized (Walk-in, Ads, No Ads, B2B, Referral, Unspecified).</div>
@@ -710,6 +743,43 @@ function bucketLabel(key, granularity){
   var parts = key.split("-");
   var d = new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, 1);
   return d.toLocaleDateString("en-US", { month:"short", year:"2-digit" });
+}
+function periodBounds(key, granularity){
+  if(granularity === "day"){
+    var d = new Date(key+"T00:00:00");
+    return { start:d, end:d };
+  }
+  if(granularity === "week"){
+    var start = new Date(key+"T00:00:00");
+    var end = new Date(start.getTime()); end.setDate(start.getDate()+6);
+    return { start:start, end:end };
+  }
+  if(granularity === "quarter"){
+    var parts = key.split("-Q"); var y = parseInt(parts[0],10), q = parseInt(parts[1],10);
+    return { start:new Date(y,(q-1)*3,1), end:new Date(y,(q-1)*3+3,0) };
+  }
+  if(granularity === "year"){
+    var y = parseInt(key,10);
+    return { start:new Date(y,0,1), end:new Date(y,11,31) };
+  }
+  var parts = key.split("-"); var y = parseInt(parts[0],10), m = parseInt(parts[1],10);
+  return { start:new Date(y,m-1,1), end:new Date(y,m,0) };
+}
+function fmtRangeLabel(start, end, granularity){
+  if(granularity === "day"){
+    return start.toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+  }
+  if(granularity === "year"){
+    return "Jan 1 – Dec 31, " + start.getFullYear();
+  }
+  var sameMonth = start.getMonth()===end.getMonth() && start.getFullYear()===end.getFullYear();
+  var startStr = start.toLocaleDateString("en-US", { month:"short", day:"numeric" });
+  if(sameMonth){
+    return startStr + "–" + end.getDate() + ", " + end.getFullYear();
+  }
+  var sameYear = start.getFullYear()===end.getFullYear();
+  var endStr = end.toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+  return sameYear ? (startStr + " – " + endStr) : (start.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) + " – " + endStr);
 }
 function bucketTopN(groups, n){
   var sorted = groups.slice().sort(function(a,b){ return b.value-a.value; });
@@ -1039,6 +1109,7 @@ function render(){
 
   document.getElementById("resultCount").textContent = fmtInt.format(tx.length);
   renderChips();
+  renderKPIs(tx);
   renderMonthlySummary(tx);
   renderTrend(tx);
   renderRevProfit(tx);
@@ -1049,6 +1120,7 @@ function render(){
   renderCustomers(tx);
   renderRegions(tx);
   renderChannels(tx);
+  renderAgents(tx);
 }
 
 function renderChips(){
@@ -1074,29 +1146,96 @@ function renderChips(){
   });
 }
 
+var GRANULARITY_NOUN = { day:"day", week:"week", month:"month", quarter:"quarter", year:"year" };
+
+function renderKPIs(tx){
+  var g = state.granularity;
+  var grid = document.getElementById("kpiGrid");
+  grid.innerHTML = "";
+  if(tx.length === 0){
+    document.getElementById("overviewSub").textContent = "No transactions in this range yet";
+    emptyState(grid, "No transactions in this range yet.");
+    return;
+  }
+  var maxDate = tx.reduce(function(a,t){ return t.date > a ? t.date : a; }, tx[0].date);
+  var key = bucketKey(maxDate, g);
+  var periodTx = tx.filter(function(t){ return bucketKey(t.date, g) === key; });
+  var agg = aggregate(periodTx);
+  var bounds = periodBounds(key, g);
+  var rangeLabel = fmtRangeLabel(bounds.start, bounds.end, g);
+  document.getElementById("overviewSub").textContent = "Latest " + GRANULARITY_NOUN[g] + " in view — " + rangeLabel;
+
+  var cards = [
+    { label:"Total Sales (pax)", value: fmtInt.format(agg.pax), tag: rangeLabel, tagType:"muted" },
+    { label:"Total Revenue", value: money(agg.revenue), tag: agg.revenue ? rangeLabel : "No revenue", tagType: agg.revenue ? "good" : "muted" },
+    { label:"Total Orders", value: fmtInt.format(agg.orders), tag: rangeLabel, tagType:"muted" },
+    { label:"Average Order Value", value: agg.orders ? money(agg.aov) : "—", tag: rangeLabel, tagType:"muted" },
+    { label:"Gross Profit", value: money(agg.profit), tag: agg.profit >= 0 ? "Positive" : "Negative", tagType: agg.profit >= 0 ? "good" : "warn" },
+    { label:"Profit Margin", value: agg.revenue ? pct(agg.margin) : "—", tag: agg.margin >= 0.2 ? "Healthy" : (agg.orders ? "Below 20%" : "—"), tagType: agg.margin >= 0.2 ? "good" : "muted" },
+    { label:"Total Cash Flow", value: money(agg.cashFlow), tag: agg.cashFlow >= 0 ? "Positive" : "Negative", tagType: agg.cashFlow >= 0 ? "good" : "warn" }
+  ];
+  cards.forEach(function(c){
+    var div = document.createElement("div"); div.className = "panel kpi";
+    div.innerHTML =
+      '<div class="kpi-label">'+c.label+'</div>'+
+      '<div class="kpi-value num">'+c.value+'</div>'+
+      '<div class="kpi-foot"><span class="kpi-tag '+c.tagType+'">'+c.tag+'</span></div>';
+    grid.appendChild(div);
+  });
+}
+
 function renderMonthlySummary(tx){
+  var g = state.granularity;
   var map = {};
   tx.forEach(function(t){
-    var k = t.date.slice(0,7);
+    var k = bucketKey(t.date, g);
     if(!map[k]) map[k] = { key:k, srp:0, cashFlow:0, orders:0 };
     map[k].srp += t.srp; map[k].cashFlow += t.cashFlow; map[k].orders += 1;
   });
-  var months = Object.keys(map).sort().reverse();
-  document.getElementById("monthlyCountTag").textContent = fmtInt.format(months.length) + " month" + (months.length===1?"":"s");
+  var keys = Object.keys(map).sort().reverse();
+  document.getElementById("monthlyCountTag").textContent = fmtInt.format(keys.length) + " " + GRANULARITY_NOUN[g] + (keys.length===1?"":"s");
+  document.getElementById("periodBreakdownSub").textContent = "Total SRP, cash flow, and transactions per " + GRANULARITY_NOUN[g];
   var tbody = document.querySelector("#monthlyTable tbody");
   tbody.innerHTML = "";
-  if(months.length === 0){
+  if(keys.length === 0){
     tbody.innerHTML = '<tr><td colspan="4" class="empty-note">No transactions in this range yet.</td></tr>';
     return;
   }
-  months.forEach(function(k){
+  keys.forEach(function(k){
     var m = map[k];
+    var bounds = periodBounds(k, g);
+    var label = fmtRangeLabel(bounds.start, bounds.end, g);
     var tr = document.createElement("tr");
     tr.innerHTML =
-      '<td>'+bucketLabel(k,"month")+'</td>'+
+      '<td>'+label+'</td>'+
       '<td class="num">'+money(m.srp)+'</td>'+
       '<td class="num">'+money(m.cashFlow)+'</td>'+
       '<td class="num">'+fmtInt.format(m.orders)+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function renderAgents(tx){
+  var groups = groupSum(tx, function(t){ return t.agent; }, function(t){ return t.srp; });
+  groups.sort(function(a,b){ return b.value-a.value; });
+  document.getElementById("agentCountTag").textContent = "Top " + Math.min(15,groups.length) + " of " + fmtInt.format(groups.length);
+  var buckets = groups.slice(0,15).map(function(g){ return { label:g.key, revenue:g.value, key:g.key }; });
+  groupedBarChart(document.getElementById("agentBar"), buckets, [
+    { key:"revenue", label:"Revenue", color:function(b,i){ return CATEGORICAL[i % CATEGORICAL.length]; } }
+  ], {
+    height:220,
+    onClick:function(b){ state.rep = state.rep===b.key?"all":b.key; document.getElementById("filterRep").value = state.rep; render(); }
+  });
+
+  var tbody = document.querySelector("#agentTable tbody");
+  tbody.innerHTML = "";
+  if(groups.length === 0){ tbody.innerHTML = '<tr><td colspan="5" class="empty-note">No agent data in this range.</td></tr>'; }
+  groups.forEach(function(g){
+    var profitSum = g.items.reduce(function(a,it){return a+it.profit;},0);
+    var aov = g.orders ? g.value/g.orders : 0;
+    var margin = g.value ? profitSum/g.value : 0;
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td>'+g.key+'</td><td class="num">'+g.orders+'</td><td class="num">'+money(g.value)+'</td><td class="num">'+money(aov)+'</td><td class="num">'+pct(margin)+'</td>';
     tbody.appendChild(tr);
   });
 }

@@ -8,13 +8,15 @@ Open [`sales_dashboard.html`](sales_dashboard.html) directly in a browser — it
 
 ## What's inside
 
-- **Monthly summary** — total SRP, total cash flow, and total transactions by month (most recent first)
+- **Top KPIs** — total sales, revenue, orders, AOV, gross profit, profit margin, and cash flow, scoped to the *latest* period matching the granularity control (click Daily and see today's numbers, Weekly for this week, Monthly for the full calendar month, etc.)
+- **Breakdown by period** — total SRP, cash flow, and transactions for every period at the selected granularity (most recent first); monthly periods are labeled with their real calendar range (e.g. "Jul 1–31")
 - **Sales performance** — trend (daily/weekly/monthly/quarterly/yearly), revenue vs. profit, target vs. actual
 - **Product analysis** — top 10 best-selling products, a "needs attention" list of low-revenue products with 10+ orders, sales by product category, package status mix
 - **Customer insights** — new vs. returning clients, acquisition trend, top 10 customers by revenue (aggregated across all their orders)
 - **Regional performance** — an origin–destination route map (Manila → top destinations by revenue) plus a ranked revenue/profit table
 - **Sales channel analysis** — revenue and performance by channel (Walk-in, Ads, No Ads, B2B, Referral)
-- **Filters** — trend granularity, custom date range, region, product category, sales rep, sales channel, with click-to-filter drill-down on charts and rows
+- **Agent performance** — revenue by sales rep (top 15 chart, full ranked table), click a bar to filter
+- **Filters** — trend granularity (drives both the Top KPIs period and the period breakdown table), custom date range, region, product category, sales rep, sales channel, with click-to-filter drill-down on charts and rows
 - **Export** — CSV, Excel, and PDF (print)
 
 ## Data mapping

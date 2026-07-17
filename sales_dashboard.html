@@ -420,7 +420,7 @@
       </div>
       <div class="table-scroll">
         <table class="data-table" id="monthlyTable">
-          <thead><tr><th>Period</th><th class="num">Total SRP</th><th class="num">Total Cash Flow</th><th class="num">Total Transactions</th></tr></thead>
+          <thead><tr><th>Period</th><th class="num">Total SRP</th><th class="num">Total Cash Flow</th><th class="num">Total Revenue</th><th class="num">Total Transactions</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -1191,7 +1191,7 @@ function render(){
   document.getElementById("resultCount").textContent = fmtInt.format(tx.length);
   renderChips();
   renderKPIs(tx, exp);
-  renderMonthlySummary(tx);
+  renderMonthlySummary(tx, exp);
   renderTrend(tx);
   renderRevProfit(tx);
   renderTarget(agg);
@@ -1270,7 +1270,7 @@ function renderKPIs(tx, exp){
   });
 }
 
-function renderMonthlySummary(tx){
+function renderMonthlySummary(tx, exp){
   var g = state.granularity;
   var map = {};
   tx.forEach(function(t){
@@ -1287,22 +1287,25 @@ function renderMonthlySummary(tx){
   });
   var keys = Object.keys(map).sort().reverse();
   document.getElementById("monthlyCountTag").textContent = fmtInt.format(keys.length) + " " + GRANULARITY_NOUN[g] + (keys.length===1?"":"s");
-  document.getElementById("periodBreakdownSub").textContent = "SRP and transactions by booking date · cash flow is completed transactions only, by processed date";
+  document.getElementById("periodBreakdownSub").textContent = "SRP and transactions by booking date · cash flow is completed transactions only, by processed date · revenue = cash flow − expenses for that period";
   var tbody = document.querySelector("#monthlyTable tbody");
   tbody.innerHTML = "";
   if(keys.length === 0){
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-note">No transactions in this range yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-note">No transactions in this range yet.</td></tr>';
     return;
   }
   keys.forEach(function(k){
     var m = map[k];
     var bounds = periodBounds(k, g);
     var label = fmtRangeLabel(bounds.start, bounds.end, g);
+    var periodExpenses = expensesInRange(exp, bounds.start, bounds.end);
+    var revenue = m.cashFlow - periodExpenses;
     var tr = document.createElement("tr");
     tr.innerHTML =
       '<td>'+label+'</td>'+
       '<td class="num">'+money(m.srp)+'</td>'+
       '<td class="num">'+money(m.cashFlow)+'</td>'+
+      '<td class="num">'+money(revenue)+'</td>'+
       '<td class="num">'+fmtInt.format(m.orders)+'</td>';
     tbody.appendChild(tr);
   });

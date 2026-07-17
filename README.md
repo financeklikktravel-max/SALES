@@ -8,8 +8,8 @@ Open [`sales_dashboard.html`](sales_dashboard.html) directly in a browser — it
 
 ## What's inside
 
-- **Top KPIs** — total sales, revenue, orders, AOV, gross profit, profit margin, and cash flow, scoped to the *latest* period matching the granularity control (click Daily and see today's numbers, Weekly for this week, Monthly for the full calendar month, etc.)
-- **Breakdown by period** — total SRP, cash flow, and transactions for every period at the selected granularity (most recent first); monthly periods are labeled with their real calendar range (e.g. "Jul 1–31")
+- **Top KPIs** — total sales, revenue, orders, AOV, gross profit, profit margin, and cash flow, scoped to the *latest* period matching the granularity control (click Daily and see today's numbers, Weekly for this week, Monthly for the full calendar month, etc.). Cash flow specifically only counts **completed** transactions, recognized on their **processed date** — every other KPI uses the booking date and isn't status-filtered.
+- **Breakdown by period** — total SRP, cash flow, and transactions for every period at the selected granularity (most recent first); monthly periods are labeled with their real calendar range (e.g. "Jul 1–31"). SRP and transaction counts are by booking date; cash flow is completed-only, by processed date — so a period can show SRP with little or no cash flow if those bookings haven't been processed yet.
 - **Sales performance** — trend (daily/weekly/monthly/quarterly/yearly), revenue vs. profit, target vs. actual
 - **Product analysis** — top 10 best-selling products, a "needs attention" list of low-revenue products with 10+ orders, sales by product category, package status mix
 - **Customer insights** — new vs. returning clients, acquisition trend, top 10 customers by revenue (aggregated across all their orders)

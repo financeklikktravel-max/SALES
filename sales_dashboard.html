@@ -1248,18 +1248,17 @@ function renderKPIs(tx, exp){
   var cashFlow = cashFlowInRange(tx, bounds.start, bounds.end);
   var expensesTotal = expensesInRange(exp, bounds.start, bounds.end);
   var netCashFlow = cashFlow - expensesTotal;
-  document.getElementById("overviewSub").textContent = "Latest " + GRANULARITY_NOUN[g] + " in view — " + rangeLabel + ". Cash flow counts completed transactions only, by processed date; expenses are from the Expenses tab, by expense date.";
+  document.getElementById("overviewSub").textContent = "Latest " + GRANULARITY_NOUN[g] + " in view — " + rangeLabel + ". Total Revenue = Total Cash Flow − Total Expenses. Cash flow counts completed transactions only, by processed date; expenses are from the Expenses tab, by expense date. \"Revenue\" in the sections below (products, regions, channels, agents) is booked SRP, not this figure.";
 
   var cards = [
     { label:"Total Sales (pax)", value: fmtInt.format(agg.pax), tag: rangeLabel, tagType:"muted" },
-    { label:"Total Revenue", value: money(agg.revenue), tag: agg.revenue ? rangeLabel : "No revenue", tagType: agg.revenue ? "good" : "muted" },
+    { label:"Total Revenue", value: money(netCashFlow), tag: "= Cash flow − expenses", tagType: netCashFlow >= 0 ? "good" : "warn" },
     { label:"Total Orders", value: fmtInt.format(agg.orders), tag: rangeLabel, tagType:"muted" },
     { label:"Average Order Value", value: agg.orders ? money(agg.aov) : "—", tag: rangeLabel, tagType:"muted" },
     { label:"Gross Profit", value: money(agg.profit), tag: agg.profit >= 0 ? "Positive" : "Negative", tagType: agg.profit >= 0 ? "good" : "warn" },
     { label:"Profit Margin", value: agg.revenue ? pct(agg.margin) : "—", tag: agg.margin >= 0.2 ? "Healthy" : (agg.orders ? "Below 20%" : "—"), tagType: agg.margin >= 0.2 ? "good" : "muted" },
     { label:"Total Cash Flow", value: money(cashFlow), tag: "Completed · processed date", tagType: cashFlow >= 0 ? "good" : "warn" },
-    { label:"Total Expenses", value: money(expensesTotal), tag: rangeLabel, tagType: "warn" },
-    { label:"Net Cash Flow", value: money(netCashFlow), tag: "Cash flow − expenses", tagType: netCashFlow >= 0 ? "good" : "warn" }
+    { label:"Total Expenses", value: money(expensesTotal), tag: rangeLabel, tagType: "warn" }
   ];
   cards.forEach(function(c){
     var div = document.createElement("div"); div.className = "panel kpi";

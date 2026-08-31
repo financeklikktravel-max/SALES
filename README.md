@@ -1,6 +1,6 @@
 # Klikk Travel — Sales Dashboard
 
-An interactive sales dashboard for Klikk Travel's travel business, built from the **KLIKK 2021 › DAILY TRANSACTIONS** and **EXPENSES** Google Sheet tabs.
+An interactive sales dashboard for Klikk Travel's travel business, built from the **KLIKK 2021 › DAILY TRANSACTIONS** and **EXPENSES** Google Sheet tabs, plus a Team Progress section from the **AGENT PROGRESS** tab.
 
 ## View it
 
@@ -18,6 +18,7 @@ Open [`sales_dashboard.html`](sales_dashboard.html) directly in a browser — it
 - **Regional performance** — an origin–destination route map (Manila → top destinations by revenue) plus a ranked revenue/profit table
 - **Sales channel analysis** — revenue and performance by channel (Walk-in, Ads, No Ads, B2B, Referral)
 - **Agent performance** — revenue by sales rep (top 15 chart, full ranked table), click a bar to filter
+- **Team progress** — month-to-date gross profit vs. monthly target for KLIKK LCTeam, from the sheet's AGENT PROGRESS tab. This is a manual snapshot pulled separately from the transactions/expenses data (see note below) — it doesn't follow the filters above.
 - **Filters** — trend granularity (drives both the Top KPIs period and the period breakdown table), custom date range, region, product category, sales rep, sales channel, with click-to-filter drill-down on charts and rows
 - **Export** — CSV, Excel, and PDF (print)
 
@@ -35,13 +36,13 @@ The sheet doesn't track literal online/retail/wholesale/marketplace channels or 
 
 ## Scope
 
-**VSP-channel transactions are excluded from this dashboard by standing request.** Of 5,284 valid transactions in the DAILY TRANSACTIONS tab, 99 tagged with the VSP channel were removed, leaving **5,185 transactions** that power every number on this page.
+**VSP-channel transactions are excluded from this dashboard by standing request.** Of 5,475 valid transactions in the DAILY TRANSACTIONS tab, 99 tagged with the VSP channel were removed, leaving **5,376 transactions** that power every number on this page.
 
 ## Data coverage
 
-5,185 real transactions from Jan 1, 2021 to Jul 15, 2026, each with complete financials (revenue, cost, commission, profit), plus 5,421 expense records from Dec 29, 2020 to Jul 13, 2026. Every KPI, chart, and table is computed live from that embedded dataset — nothing is padded, sampled, or estimated. Destination names and expense types are case-normalized (e.g. "Boracay"/"BORACAY" and "Load"/"LOAD" in the source sheets are merged) but otherwise left as entered; free-text variants of the same place (e.g. "CAGAYAN" vs "CAGAYAN DE ORO" vs "CDO") are not merged.
+5,376 real transactions from Jan 1, 2021 to Aug 31, 2026, each with complete financials (revenue, cost, commission, profit), plus 5,722 expense records from Dec 29, 2020 to Aug 31, 2026. Every KPI, chart, and table is computed live from that embedded dataset — nothing is padded, sampled, or estimated. Destination and expense-type blanks/placeholders (e.g. destination "NA" for B2B packages) are mapped to "Unspecified"; free-text variants of the same place (e.g. "CAGAYAN" vs "CAGAYAN DE ORO" vs "CDO") are not merged.
 
-**A note on how the EXPENSES tab was pulled:** Google's export tool for this connector always returns whichever sheet tab is in the *first (leftmost)* position in the spreadsheet — it doesn't track which tab is "open" in a browser. To pull the EXPENSES tab, it had to be temporarily dragged to the first position, then DAILY TRANSACTIONS was moved back afterward. Future refreshes of either dataset require the same temporary reordering.
+**How the data is pulled:** each tab (`gid=0` for DAILY TRANSACTIONS, `gid=1349415762` for EXPENSES) is fetched directly via Google's public CSV export endpoint (`.../export?format=csv&gid=...`), which returns the full tab as plain CSV with no size limit — this works for any tab regardless of its position in the spreadsheet, no tab-reordering needed. (An earlier refresh attempt used a different connector that converts the whole multi-tab spreadsheet to one markdown-table dump and hits a hard output-size ceiling well before reaching most of the data — avoid that path for this sheet.)
 
 ## Refreshing the data
 

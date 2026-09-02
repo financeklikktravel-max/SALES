@@ -363,11 +363,11 @@
   <nav class="section-nav" id="sectionNav">
     <a class="nav-pill" href="#overview">Overview</a>
     <a class="nav-pill" href="#performance">Sales Performance</a>
+    <a class="nav-pill" href="#agents">Agent Performance</a>
     <a class="nav-pill" href="#products">Product Analysis</a>
     <a class="nav-pill" href="#customers">Customer Insights</a>
     <a class="nav-pill" href="#regions">Regional Performance</a>
     <a class="nav-pill" href="#channels">Sales Channel</a>
-    <a class="nav-pill" href="#agents">Agent Performance</a>
     <a class="nav-pill" href="#teamprogress">Team Progress</a>
     <a class="nav-pill" href="#expenses">Expenses</a>
   </nav>
@@ -476,6 +476,36 @@
           <span>Set target:</span>
           <span>₱</span><input type="number" id="targetInput" min="0" step="10000">
           <span style="margin-left:auto;font-weight:650;" id="targetPct" class="num"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AGENT PERFORMANCE ================= -->
+  <section class="section" id="agents">
+    <div class="section-head">
+      <div>
+        <h2>Agent Performance</h2>
+        <p>Revenue and profit by sales rep — click a bar to filter the dashboard</p>
+      </div>
+    </div>
+    <div class="grid grid-channels">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Revenue by agent</div><div class="panel-sub">Top agents by revenue</div></div>
+          <span class="panel-tag" id="agentCountTag"></span>
+        </div>
+        <div class="chart-wrap scrollable" id="agentBar"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Agent comparison</div><div class="panel-sub">All agents, ranked by revenue</div></div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="agentTable">
+            <thead><tr><th>Agent</th><th class="num">Orders</th><th class="num">Revenue</th><th class="num">AOV</th><th class="num">Margin</th></tr></thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -607,36 +637,6 @@
         <div class="table-scroll">
           <table class="data-table" id="channelTable">
             <thead><tr><th>Channel</th><th class="num">Orders</th><th class="num">Revenue</th><th class="num">AOV</th><th class="num">Margin</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= AGENT PERFORMANCE ================= -->
-  <section class="section" id="agents">
-    <div class="section-head">
-      <div>
-        <h2>Agent Performance</h2>
-        <p>Revenue and profit by sales rep — click a bar to filter the dashboard</p>
-      </div>
-    </div>
-    <div class="grid grid-channels">
-      <div class="panel">
-        <div class="panel-head">
-          <div><div class="panel-title">Revenue by agent</div><div class="panel-sub">Top agents by revenue</div></div>
-          <span class="panel-tag" id="agentCountTag"></span>
-        </div>
-        <div class="chart-wrap scrollable" id="agentBar"></div>
-      </div>
-      <div class="panel">
-        <div class="panel-head">
-          <div><div class="panel-title">Agent comparison</div><div class="panel-sub">All agents, ranked by revenue</div></div>
-        </div>
-        <div class="table-scroll">
-          <table class="data-table" id="agentTable">
-            <thead><tr><th>Agent</th><th class="num">Orders</th><th class="num">Revenue</th><th class="num">AOV</th><th class="num">Margin</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>

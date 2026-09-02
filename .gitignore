@@ -4,3 +4,6 @@ klikk_decoded.csv
 
 # Claude Code local settings
 .claude/
+
+# Local run log from scripts/refresh_dashboard.ps1
+scripts/refresh.log

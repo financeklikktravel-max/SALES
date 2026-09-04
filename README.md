@@ -36,11 +36,11 @@ The sheet doesn't track literal online/retail/wholesale/marketplace channels or 
 
 ## Scope
 
-**VSP-channel transactions are excluded from this dashboard by standing request.** Of 5,485 valid transactions in the DAILY TRANSACTIONS tab, 99 tagged with the VSP channel were removed, leaving **5,386 transactions** that power every number on this page.
+**VSP-channel transactions are excluded from this dashboard by standing request.** Of 5,492 valid transactions in the DAILY TRANSACTIONS tab, 99 tagged with the VSP channel were removed, leaving **5,393 transactions** that power every number on this page.
 
 ## Data coverage
 
-5,386 real transactions from Jan 1, 2021 to Sep 3, 2026, each with complete financials (revenue, cost, commission, profit), plus 5,723 expense records from Dec 29, 2020 to Sep 3, 2026. Every KPI, chart, and table is computed live from that embedded dataset — nothing is padded, sampled, or estimated. Destination and expense-type blanks/placeholders (e.g. destination "NA" for B2B packages) are mapped to "Unspecified"; free-text variants of the same place (e.g. "CAGAYAN" vs "CAGAYAN DE ORO" vs "CDO") are not merged.
+5,393 real transactions from Jan 1, 2021 to Sep 4, 2026, each with complete financials (revenue, cost, commission, profit), plus 5,723 expense records from Dec 29, 2020 to Sep 4, 2026. Every KPI, chart, and table is computed live from that embedded dataset — nothing is padded, sampled, or estimated. Destination and expense-type blanks/placeholders (e.g. destination "NA" for B2B packages) are mapped to "Unspecified"; free-text variants of the same place (e.g. "CAGAYAN" vs "CAGAYAN DE ORO" vs "CDO") are not merged.
 
 **How the data is pulled:** each tab (`gid=0` for DAILY TRANSACTIONS, `gid=1349415762` for EXPENSES) is fetched directly via Google's public CSV export endpoint (`.../export?format=csv&gid=...`), which returns the full tab as plain CSV with no size limit — this works for any tab regardless of its position in the spreadsheet, no tab-reordering needed. (An earlier refresh attempt used a different connector that converts the whole multi-tab spreadsheet to one markdown-table dump and hits a hard output-size ceiling well before reaching most of the data — avoid that path for this sheet.)
 
